@@ -241,10 +241,3 @@ The next `docker compose up` will apply it.
 | Backend can't connect to db at startup | Postgres still booting | EnableRetryOnFailure handles transient errors; first start may take ~30s |
 | Voice config endpoint 404 on first call | Seed runner didn't insert singleton | Check `backend` logs for migration/seed completion |
 
----
-
-## Contact
-
-PRD-related questions per the assessment doc:
-- jenya@rocketdreams.co
-- +972 54-524-1285
