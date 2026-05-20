@@ -10,6 +10,9 @@ namespace VoiceConcierge.Api.Controllers;
 public class LiveKitTokenController(ILiveKitTokenService service) : BaseController
 {
     [HttpPost]
-    public async Task<IActionResult> IssueAsync([FromBody] LiveKitTokenRequest request) =>
-        ActionResult(await service.IssueAsync(request));
+    public async Task<IActionResult> IssueAsync([FromBody] LiveKitTokenRequest request)
+    {
+        var serviceResponse = await service.IssueAsync(request);
+        return ActionResult(serviceResponse);
+    }
 }

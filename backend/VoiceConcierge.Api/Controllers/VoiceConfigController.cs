@@ -10,24 +10,33 @@ namespace VoiceConcierge.Api.Controllers;
 public class VoiceConfigController(IVoiceConfigService service, IVoicePreviewService previewService) : BaseController
 {
     [HttpGet("api/voice-config")]
-    public async Task<IActionResult> GetAsync(CancellationToken ct) =>
-        ActionResult(await service.GetAsync(ct));
+    public async Task<IActionResult> GetAsync(CancellationToken ct)
+    {
+        var serviceResponse = await service.GetAsync(ct);
+        return ActionResult(serviceResponse);
+    }
 
     [HttpPut("api/voice-config")]
-    public async Task<IActionResult> UpdateAsync([FromBody] UpdateVoiceConfigRequest request, CancellationToken ct) =>
-        ActionResult(await service.UpdateAsync(request, ct));
+    public async Task<IActionResult> UpdateAsync([FromBody] UpdateVoiceConfigRequest request, CancellationToken ct)
+    {
+        var serviceResponse = await service.UpdateAsync(request, ct);
+        return ActionResult(serviceResponse);
+    }
 
     [HttpGet("api/voices")]
-    public async Task<IActionResult> GetCatalogAsync(CancellationToken ct) =>
-        ActionResult(await service.GetCatalogAsync(ct));
+    public async Task<IActionResult> GetCatalogAsync(CancellationToken ct)
+    {
+        var serviceResponse = await service.GetCatalogAsync(ct);
+        return ActionResult(serviceResponse);
+    }
 
     [HttpPost("api/voices/{id}/preview")]
     public async Task<IActionResult> PreviewAsync(VoiceId id, CancellationToken ct)
     {
-        var response = await previewService.PreviewAsync(id, ct);
-        if (!response.IsSuccess)
-            return ActionResult(response);
+        var serviceResponse = await previewService.PreviewAsync(id, ct);
+        if (!serviceResponse.IsSuccess)
+            return ActionResult(serviceResponse);
 
-        return File(response.Value!, "audio/mpeg");
+        return File(serviceResponse.Value!, "audio/mpeg");
     }
 }
