@@ -1,0 +1,45 @@
+# ──── PRD extraction (local-only) ────
+_prd_extracted/
+
+# ──── Secrets ────
+.env
+.env.local
+*.secrets.json
+
+# ──── .NET ────
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.swp
+
+# ──── Python ────
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.python-version-local
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# ──── Node ────
+node_modules/
+dist/
+.vite/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+# ──── IDE ────
+.idea/
+.vscode/
+*.iml
+
+# ──── OS ────
+.DS_Store
+Thumbs.db

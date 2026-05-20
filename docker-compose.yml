@@ -1,0 +1,76 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_URLS: ${ASPNETCORE_URLS}
+      ConnectionStrings__Default: Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      AgentAuth__SharedSecret: ${AGENT_SHARED_SECRET}
+      OpenAI__ApiKey: ${OpenAI__ApiKey}
+      OpenAI__ChatModel: ${OpenAI__ChatModel}
+      OpenAI__EmbeddingModel: ${OpenAI__EmbeddingModel}
+      LiveKit__Url: ${LIVEKIT_URL}
+      LiveKit__ApiKey: ${LIVEKIT_API_KEY}
+      LiveKit__ApiSecret: ${LIVEKIT_API_SECRET}
+      ElevenLabs__ApiKey: ${ElevenLabs__ApiKey}
+      ElevenLabs__VoiceJames: ${ElevenLabs__VoiceJames}
+      ElevenLabs__VoiceSofia: ${ElevenLabs__VoiceSofia}
+      ElevenLabs__VoiceMarcus: ${ElevenLabs__VoiceMarcus}
+      ElevenLabs__VoiceElena: ${ElevenLabs__VoiceElena}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  agent:
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+    environment:
+      BACKEND_URL: ${BACKEND_URL}
+      AGENT_SHARED_SECRET: ${AGENT_SHARED_SECRET}
+      LIVEKIT_URL: ${LIVEKIT_URL}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET}
+      OPENAI_API_KEY: ${OpenAI__ApiKey}
+      DEEPGRAM_API_KEY: ${DEEPGRAM_API_KEY}
+      ELEVENLABS_API_KEY: ${ElevenLabs__ApiKey}
+      ELEVENLABS_VOICE_JAMES: ${ElevenLabs__VoiceJames}
+      ELEVENLABS_VOICE_SOFIA: ${ElevenLabs__VoiceSofia}
+      ELEVENLABS_VOICE_MARCUS: ${ElevenLabs__VoiceMarcus}
+      ELEVENLABS_VOICE_ELENA: ${ElevenLabs__VoiceElena}
+    depends_on:
+      backend:
+        condition: service_started
+
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_started
+
+volumes:
+  db_data:
